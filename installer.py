@@ -54,9 +54,21 @@ def actualizar_sistema():
     print("Paquetes actualizados correctamente 🟢 \n")
 
 def instalar_apache():
-    print("Instalando Apache2... \n")
-    subprocess.run("sudo apt install -y apache2 > /dev/null 2>&1", shell=True, check=True)
-    print("Apache2 instalado correctamente 🟢 \n")
+    print("Comprobando si Apache2 está instalado... \n")
+    
+    # Comprobar si Apache2 ya está instalado
+    apache_instalado = subprocess.run("dpkg -l | grep apache2", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    if apache_instalado.returncode == 0:  # Si el comando anterior encuentra Apache2
+        print("Apache2 ya está instalado 🟢 \n")
+    else:
+        print("Apache2 no encontrado. Instalando Apache2... \n")
+        try:
+            subprocess.run("sudo apt install -y apache2 > /dev/null 2>&1", shell=True, check=True)
+            print("Apache2 instalado correctamente 🟢 \n")
+        except subprocess.CalledProcessError:
+            print("❌ Error al instalar Apache2.")
+            sys.exit(1)
 
 def configurar_apache():
     print("Configurando Apache para aceptar conexiones en todas las interfaces... \n")
@@ -101,9 +113,21 @@ def ejecutar_scrapper():
         os.remove(css_origen)
 
 def instalar_suricata():
-    print("Instalando Suricata... \n")
-    subprocess.run("sudo apt install -y suricata > /dev/null 2>&1", shell=True, check=True)
-    print("Suricata instalado correctamente 🟢 \n")
+    print("Comprobando si Suricata está instalado... \n")
+    
+    # Comprobar si Suricata ya está instalado
+    suricata_instalado = subprocess.run("dpkg -l | grep suricata", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    if suricata_instalado.returncode == 0:  # Si el comando anterior encuentra Suricata
+        print("Suricata ya está instalado 🟢 \n")
+    else:
+        print("Suricata no encontrado. Instalando Suricata... \n")
+        try:
+            subprocess.run("sudo apt install -y suricata > /dev/null 2>&1", shell=True, check=True)
+            print("Suricata instalado correctamente 🟢 \n")
+        except subprocess.CalledProcessError:
+            print("❌ Error al instalar Suricata.")
+            sys.exit(1)
 
 def configurar_suricata():
     config_path = "/etc/suricata/suricata.yaml"
@@ -170,25 +194,33 @@ def iniciar_habilitar_suricata():
 
 def instalar_mariadb():
     """Instala MariaDB y lo configura para iniciar automáticamente con usuario root y contraseña."""
-    print("⚙️ Instalando MariaDB...\n")
+    print("Comprobando si MariaDB está instalado... \n")
+    
+    # Comprobar si MariaDB ya está instalado
+    mariadb_instalado = subprocess.run("dpkg -l | grep mariadb-server", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    if mariadb_instalado.returncode == 0:  # Si el comando anterior encuentra MariaDB
+        print("MariaDB ya está instalado 🟢 \n")
+    else:
+        print("MariaDB no encontrado. Instalando MariaDB... \n")
+        try:
+            # Instalar MariaDB Server
+            subprocess.run("sudo apt install -y mariadb-server > /dev/null 2>&1", shell=True, check=True)
+            print("✅ MariaDB instalado correctamente.\n")
 
-    try:
-        # Instalar MariaDB Server
-        subprocess.run("sudo apt install -y mariadb-server > /dev/null 2>&1", shell=True, check=True)
-        print("✅ MariaDB instalado correctamente.\n")
+            # Iniciar y habilitar el servicio
+            subprocess.run("sudo systemctl enable mariadb > /dev/null 2>&1", shell=True, check=True)
+            subprocess.run("sudo systemctl start mariadb > /dev/null 2>&1", shell=True, check=True)
+            print("🚀 MariaDB iniciado y habilitado en el arranque.\n")
 
-        # Iniciar y habilitar el servicio
-        subprocess.run("sudo systemctl enable mariadb > /dev/null 2>&1", shell=True, check=True)
-        subprocess.run("sudo systemctl start mariadb > /dev/null 2>&1", shell=True, check=True)
-        print("🚀 MariaDB iniciado y habilitado en el arranque.\n")
+            # Configurar el usuario root con mysql_native_password y contraseña 'root'
+            print("🔧 Configurando autenticación y contraseña de root...\n")
+            
+            print("✅ Root configurado con 'mysql_native_password' y contraseña 'root'.\n")
+            
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Error durante la instalación de MariaDB: {e}")
 
-        # Configurar el usuario root con mysql_native_password y contraseña 'root'
-        print("🔧 Configurando autenticación y contraseña de root...\n")
-        
-        print("✅ Root configurado con 'mysql_native_password' y contraseña 'root'.\n")
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error durante la instalación de MariaDB: {e}")
 
 def configurar_base_datos():
     """Configura la base de datos usando usuario y contraseña."""
