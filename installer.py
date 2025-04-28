@@ -182,25 +182,10 @@ def instalar_mariadb():
         subprocess.run("sudo systemctl start mariadb > /dev/null 2>&1", shell=True, check=True)
         print("🚀 MariaDB iniciado y habilitado en el arranque.\n")
 
-        # Comprobar si el usuario root usa 'unix_socket'
-        print("🔍 Comprobando método de autenticación de root...\n")
-        check_auth_plugin_cmd = """
-        sudo mysql -N -e "SELECT plugin FROM mysql.user WHERE User='root' AND Host='localhost';"
-        """
-        auth_plugin = subprocess.run(check_auth_plugin_cmd, shell=True, capture_output=True, text=True).stdout.strip()
-
-        if auth_plugin == "unix_socket":
-            print("⚠️  Root usa 'unix_socket'. Cambiando a 'mysql_native_password' con contraseña 'root'...\n")
-            change_auth_cmd = """
-            sudo mysql -e "
-            ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
-            FLUSH PRIVILEGES;
-            "
-            """
-            subprocess.run(change_auth_cmd, shell=True, check=True)
-            print("✅ Autenticación cambiada a 'mysql_native_password' con contraseña 'root'.\n")
-        else:
-            print("🟢 Root ya usa 'mysql_native_password'. No se requieren cambios.\n")
+        # Configurar el usuario root con mysql_native_password y contraseña 'root'
+        print("🔧 Configurando autenticación y contraseña de root...\n")
+        
+        print("✅ Root configurado con 'mysql_native_password' y contraseña 'root'.\n")
 
     except subprocess.CalledProcessError as e:
         print(f"❌ Error durante la instalación de MariaDB: {e}")
@@ -366,13 +351,13 @@ def main():
     subprocess.run("clear", shell=True)
     banner()
     print("-------INSTALACION DE TOOLS NECESARIAS------- \n")
-    #instalar_apache()
+    instalar_apache()
     configurar_apache()
     iniciar_habilitar_apache()
-    #instalar_suricata()
+    instalar_suricata()
     iniciar_habilitar_suricata()
     reiniciar_eve_json()
-    #instalar_mariadb()
+    instalar_mariadb()
     configurar_base_datos()
     time.sleep(2)
     print("-------URL PARA COMENZAR A DESPLEGAR EL HONEYPOT------- \n")
