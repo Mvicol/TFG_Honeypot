@@ -1,0 +1,1 @@
+Aqui iran las rules custom que utilizara suricata (de momento utiliza las default que tiene suricata"
