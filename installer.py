@@ -254,6 +254,8 @@ def verificar_credenciales_mariadb():
         ).close()
         print("🟢 Acceso correcto con usuario 'root' y contraseña 'root'.\n")
     except mysql.connector.Error:
+        subprocess.run("clear", shell=True)
+        banner()
         print("❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.")
         print("🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:")
         print("    sudo mysql -u root -p")
