@@ -258,7 +258,7 @@ def verificar_credenciales_mariadb():
             auth_plugin='mysql_native_password'
         ).close()
         print("🟢 Acceso correcto con usuario 'root' y contraseña 'root'.\n")
-     except mysql.connector.Error:
+        except mysql.connector.Error:
         subprocess.run("clear", shell=True)
         banner()
         print(f"{RED_BOLD}❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.{RESET}")
@@ -270,7 +270,7 @@ def verificar_credenciales_mariadb():
         exit(1)
 
 def configurar_base_datos():
-    """Configura la base de datos usando usuario y contraseña."""
+    
     print("⚡ Configurando base de datos en MariaDB... \n")
     try:
         # Conectar con usuario root y contraseña
