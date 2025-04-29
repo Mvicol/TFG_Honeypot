@@ -192,6 +192,8 @@ def iniciar_habilitar_suricata():
 
 
 
+import subprocess
+
 def instalar_mariadb():
     """Instala MariaDB y lo configura para iniciar automáticamente con usuario root y contraseña."""
     print("Comprobando si MariaDB está instalado... \n")
@@ -213,8 +215,16 @@ def instalar_mariadb():
             subprocess.run("sudo systemctl start mariadb > /dev/null 2>&1", shell=True, check=True)
             print("🚀 MariaDB iniciado y habilitado en el arranque.\n")
 
-            # Configurar el usuario root con mysql_native_password y contraseña 'root'
+            # Configurar la base de datos para asegurar que se pide contraseña
             print("🔧 Configurando autenticación y contraseña de root...\n")
+            # Ejecutar el script de seguridad de MariaDB para habilitar la contraseña
+            subprocess.run("sudo mysql_secure_installation > /dev/null 2>&1", shell=True, check=True)
+
+            # Establecer la contraseña de root y habilitar el uso de mysql_native_password
+            # Se utiliza un comando SQL para cambiar la contraseña
+            subprocess.run(
+                "sudo mysql -u root -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';\"",
+                shell=True, check=True)
             
             print("✅ Root configurado con 'mysql_native_password' y contraseña 'root'.\n")
             
