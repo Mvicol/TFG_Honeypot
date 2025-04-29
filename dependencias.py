@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import shutil
+import time
 
 def instalar_paquetes_apt():
     print("⚡ Instalando paquetes de sistema con APT...\n")
@@ -48,7 +49,8 @@ def instalar_paquetes_pip():
 def instalar_dependencias():
     instalar_paquetes_apt()
     instalar_paquetes_pip()
-    print("✅ Todas las dependencias han sido instaladas correctamente.\n")
 
 if __name__ == "__main__":
     instalar_dependencias()
+    print("✅ Todas las dependencias han sido instaladas correctamente.\n")
+    time.sleep(3)

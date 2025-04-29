@@ -31,11 +31,13 @@ banner()
 checkPerms()
 
 def dependencias():
-    """Instala el conector de MySQL para Python si no está instalado"""
+    
+    #Instala el conector de MySQL para Python si no está instalado
+
     print("⚠️ mysql-connector-python no está instalado. Instalando...\n")
     subprocess.run("sudo pip3 install --break-system-packages mysql-connector-python", shell=True, check=True)
     subprocess.run("sudo apt install -y jq > /dev/null 2>&1", shell=True, check=True)
-    subprocess.run("sudo python3 dependencias.py > /dev/null 2>&1", shell=True, check=True)
+    subprocess.run("sudo python3 dependencias.py", shell=True, check=True)
     
     import mysql.connector  # Intentar importar nuevamente
     print("✅ mysql-connector-python instalado correctamente.\n")
@@ -245,6 +247,9 @@ def instalar_mariadb():
 
 def verificar_credenciales_mariadb():
     """Verifica si se puede acceder a MariaDB con usuario 'root' y contraseña 'root'."""
+    RED_BOLD = "\033[1;31m"
+    RESET = "\033[0m"
+
     try:
         mysql.connector.connect(
             host="localhost",
@@ -256,12 +261,12 @@ def verificar_credenciales_mariadb():
     except mysql.connector.Error:
         subprocess.run("clear", shell=True)
         banner()
-        print("❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.")
-        print("🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:")
-        print("    sudo mysql -u root -p")
-        print("    (luego en el prompt de mysql):")
-        print("    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';")
-        print("    FLUSH PRIVILEGES;\n")
+        print(f"{RED_BOLD}❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.{RESET}")
+        print(f"{RED_BOLD}🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:{RESET}")
+        print(f"{RED_BOLD}    sudo mysql -u root -p{RESET}")
+        print(f"{RED_BOLD}    (luego en el prompt de mysql):{RESET}")
+        print(f"{RED_BOLD}    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';{RESET}")
+        print(f"{RED_BOLD}    FLUSH PRIVILEGES;\n{RESET}")
         exit(1)
 
 def configurar_base_datos():
