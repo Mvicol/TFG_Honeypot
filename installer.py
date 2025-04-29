@@ -245,6 +245,9 @@ def instalar_mariadb():
         except subprocess.CalledProcessError as e:
             print(f"❌ Error al cambiar el método de autenticación: {e}")
 
+import mysql.connector
+import subprocess
+
 def verificar_credenciales_mariadb():
     """Verifica si se puede acceder a MariaDB con usuario 'root' y contraseña 'root'."""
     RED_BOLD = "\033[1;31m"
@@ -258,9 +261,9 @@ def verificar_credenciales_mariadb():
             auth_plugin='mysql_native_password'
         ).close()
         print("🟢 Acceso correcto con usuario 'root' y contraseña 'root'.\n")
-        except mysql.connector.Error:
+    except mysql.connector.Error:
         subprocess.run("clear", shell=True)
-        banner()
+        # banner()  # Descomenta si tienes definida esta función
         print(f"{RED_BOLD}❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.{RESET}")
         print(f"{RED_BOLD}🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:{RESET}")
         print(f"{RED_BOLD}    sudo mysql -u root -p{RESET}")
@@ -268,6 +271,7 @@ def verificar_credenciales_mariadb():
         print(f"{RED_BOLD}    ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';{RESET}")
         print(f"{RED_BOLD}    FLUSH PRIVILEGES;\n{RESET}")
         exit(1)
+
 
 def configurar_base_datos():
     
