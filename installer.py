@@ -184,10 +184,10 @@ def iniciar_habilitar_suricata():
     print("Habilitando y arrancando Suricata... \n")
 
     configurar_suricata()
-
+    
     subprocess.run("sudo systemctl start suricata > /dev/null 2>&1", shell=True, check=True)
     subprocess.run("sudo chmod 644 /var/log/suricata/eve.json", shell=True, check=True)
-    subprocess.run("sudo chown root:kali /var/log/suricata/eve.json", shell=True, check=True)
+    subprocess.run("chown root:$(whoami) /var/log/suricata/eve.json", shell=True, check=True)
     subprocess.run("sudo systemctl restart suricata > /dev/null 2>&1", shell=True, check=True)
     subprocess.run("sudo systemctl disable suricata && sudo systemctl start suricata > /dev/null 2>&1", shell=True, check=True)
     print("Suricata habilitado y en ejecución 🟢 \n")
