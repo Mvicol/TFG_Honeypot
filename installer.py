@@ -258,14 +258,14 @@ def verificar_credenciales_mariadb():
             auth_plugin='mysql_native_password'
         ).close()
         print("🟢 Acceso correcto con usuario 'root' y contraseña 'root'.\n")
-    except mysql.connector.Error:
+     except mysql.connector.Error:
         subprocess.run("clear", shell=True)
         banner()
         print(f"{RED_BOLD}❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.{RESET}")
         print(f"{RED_BOLD}🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:{RESET}")
         print(f"{RED_BOLD}    sudo mysql -u root -p{RESET}")
         print(f"{RED_BOLD}    (luego en el prompt de mysql):{RESET}")
-        print(f"{RED_BOLD}    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';{RESET}")
+        print(f"{RED_BOLD}    ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';{RESET}")
         print(f"{RED_BOLD}    FLUSH PRIVILEGES;\n{RESET}")
         exit(1)
 
