@@ -405,10 +405,10 @@ def main():
     print("-------URL PARA COMENZAR A DESPLEGAR EL HONEYPOT------- \n")
     ejecutar_scrapper()
     print("\033[1;32m" + "\n" + "="*72)
-    print("--------🚀🟢HONEYPOT DESPLEGADO Y CONFIGURADO CORRECTAMENTE 🟢🚀--------")
+    print("--------🚀 🟢HONEYPOT DESPLEGADO Y CONFIGURADO CORRECTAMENTE 🟢 🚀--------")
     print("="*72 + "\033[0m\n\n\n")
     print("\033[1;32m" + "\n" + "="*72)
-    print("--------🐿️🟢SURICATA VIGILANDO HONEYPOT 🟢🐿️--------")
+    print("--------🐿️ 🟢SURICATA VIGILANDO HONEYPOT 🟢 🐿️--------")
     print("="*72 + "\033[0m\n")
     monitorear_suricata()
    
@@ -419,5 +419,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
     finally:
-        # Asegurarse de que Suricata se detenga incluso si hay un error
+        # Aun que se termine el programa vuelve a "cerrar" suricata por si acaso
         parar_suricata()
