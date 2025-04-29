@@ -27,7 +27,7 @@ def instalar_paquetes_apt():
 
 def instalar_paquetes_pip():
     print("🐍 Instalando paquetes de Python con PIP...\n")
-    paquetes_pip = ["mysql-connector-python", "python-dotenv"]
+    paquetes_pip = ["mysql-connector-python", "python-dotenv, python-docx"]
     paquetes_a_instalar = []
 
     for paquete in paquetes_pip:
