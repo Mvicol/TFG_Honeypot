@@ -195,41 +195,53 @@ def iniciar_habilitar_suricata():
 import subprocess
 
 def instalar_mariadb():
-    """Instala MariaDB y lo configura para iniciar automáticamente con usuario root y contraseña."""
-    print("Comprobando si MariaDB está instalado... \n")
-    
-    # Comprobar si MariaDB ya está instalado
+    """Instala MariaDB y asegura autenticación por contraseña para root."""
+    print("Comprobando si MariaDB está instalado...\n")
     mariadb_instalado = subprocess.run("dpkg -l | grep mariadb-server", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     
-    if mariadb_instalado.returncode == 0:  # Si el comando anterior encuentra MariaDB
-        print("MariaDB ya está instalado 🟢 \n")
+    if mariadb_instalado.returncode == 0:
+        print("MariaDB ya está instalado 🟢\n")
     else:
-        print("MariaDB no encontrado. Instalando MariaDB... \n")
+        print("MariaDB no encontrado. Instalando MariaDB...\n")
         try:
-            # Instalar MariaDB Server
             subprocess.run("sudo apt install -y mariadb-server > /dev/null 2>&1", shell=True, check=True)
             print("✅ MariaDB instalado correctamente.\n")
-
-            # Iniciar y habilitar el servicio
-            subprocess.run("sudo systemctl enable mariadb > /dev/null 2>&1", shell=True, check=True)
-            subprocess.run("sudo systemctl start mariadb > /dev/null 2>&1", shell=True, check=True)
-            print("🚀 MariaDB iniciado y habilitado en el arranque.\n")
-
-            # Configurar la base de datos para asegurar que se pide contraseña
-            print("🔧 Configurando autenticación y contraseña de root...\n")
-            # Ejecutar el script de seguridad de MariaDB para habilitar la contraseña
-            subprocess.run("sudo mysql_secure_installation > /dev/null 2>&1", shell=True, check=True)
-
-            # Establecer la contraseña de root y habilitar el uso de mysql_native_password
-            # Se utiliza un comando SQL para cambiar la contraseña
-            subprocess.run(
-                "sudo mysql -u root -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';\"",
-                shell=True, check=True)
-            
-            print("✅ Root configurado con 'mysql_native_password' y contraseña 'root'.\n")
-            
         except subprocess.CalledProcessError as e:
-            print(f"❌ Error durante la instalación de MariaDB: {e}")
+            print(f"❌ Error al instalar MariaDB: {e}")
+            return
+
+    try:
+        subprocess.run("sudo systemctl enable mariadb > /dev/null 2>&1", shell=True, check=True)
+        subprocess.run("sudo systemctl start mariadb > /dev/null 2>&1", shell=True, check=True)
+        print("🚀 MariaDB iniciado y habilitado en el arranque.\n")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error al iniciar MariaDB: {e}")
+        return
+
+    print("🔍 Verificando si root permite conexión sin contraseña...\n")
+
+    resultado = subprocess.run(
+        "sudo mysql -N -B -e \"SELECT plugin FROM mysql.user WHERE User='root' AND Host='localhost';\"",
+        shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+
+    if resultado.returncode != 0:
+        print("🔐 No se puede acceder a MariaDB sin contraseña (ya configurado). No se requiere cambio.\n")
+        return
+
+    plugin = resultado.stdout.strip()
+    if plugin == "mysql_native_password":
+        print("✅ El usuario root ya usa autenticación por contraseña (mysql_native_password).\n")
+    else:
+        print(f"⚠ El usuario root usa '{plugin}', cambiando a 'mysql_native_password' con contraseña 'root'...\n")
+        try:
+            subprocess.run(
+                "sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'; FLUSH PRIVILEGES;\"",
+                shell=True, check=True
+            )
+            print("✅ Root configurado para usar contraseña.\n")
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Error al cambiar el método de autenticación: {e}")
 
 
 def configurar_base_datos():
