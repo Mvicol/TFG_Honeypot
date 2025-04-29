@@ -238,7 +238,7 @@ def instalar_mariadb():
         print(f"⚠ El usuario root usa '{plugin}', cambiando a 'mysql_native_password' con contraseña 'root'...\n")
         try:
             subprocess.run(
-                "sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root'; FLUSH PRIVILEGES;\"",
+                "sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';" FLUSH PRIVILEGES;\"",
                 shell=True, check=True
             )
             print("✅ Root configurado para usar contraseña.\n")
@@ -264,6 +264,7 @@ def verificar_credenciales_mariadb():
     except mysql.connector.Error:
         subprocess.run("clear", shell=True)
         # banner()  # Descomenta si tienes definida esta función
+        banner()
         print(f"{RED_BOLD}❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.{RESET}")
         print(f"{RED_BOLD}🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:{RESET}")
         print(f"{RED_BOLD}    sudo mysql -u root -p{RESET}")
