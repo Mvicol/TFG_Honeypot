@@ -243,6 +243,24 @@ def instalar_mariadb():
         except subprocess.CalledProcessError as e:
             print(f"❌ Error al cambiar el método de autenticación: {e}")
 
+def verificar_credenciales_mariadb():
+    """Verifica si se puede acceder a MariaDB con usuario 'root' y contraseña 'root'."""
+    try:
+        mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            auth_plugin='mysql_native_password'
+        ).close()
+        print("🟢 Acceso correcto con usuario 'root' y contraseña 'root'.\n")
+    except mysql.connector.Error:
+        print("❌ No se puede acceder a MariaDB con usuario 'root' y contraseña 'root'.")
+        print("🔧 Por favor, cambia la contraseña del usuario root a 'root' manualmente con los siguientes comandos:")
+        print("    sudo mysql -u root -p")
+        print("    (luego en el prompt de mysql):")
+        print("    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';")
+        print("    FLUSH PRIVILEGES;\n")
+        exit(1)
 
 def configurar_base_datos():
     """Configura la base de datos usando usuario y contraseña."""
@@ -412,6 +430,7 @@ def main():
     iniciar_habilitar_suricata()
     reiniciar_eve_json()
     instalar_mariadb()
+    verificar_credenciales_mariadb()
     configurar_base_datos()
     time.sleep(2)
     print("-------URL PARA COMENZAR A DESPLEGAR EL HONEYPOT------- \n")
