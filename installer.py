@@ -115,11 +115,17 @@ def instalar_y_configurar_tor():
         print("✅ Tor ya está instalado.\n")
 
     torrc_path = "/etc/tor/torrc"
+    torrc_dir = os.path.dirname(torrc_path)
+
+    if not os.path.exists(torrc_dir):
+        print("📁 Directorio /etc/tor no existe. Creándolo...\n")
+        subprocess.run(f"sudo mkdir -p {torrc_dir}", shell=True, check=True)
+
     if not os.path.exists(torrc_path):
         print("🔨 Archivo torrc no existe. Creando archivo básico...\n")
         with open(torrc_path, "w") as f:
             f.write("\n")
-        subprocess.run("sudo chmod 644 /etc/tor/torrc", shell=True, check=True)
+        subprocess.run("sudo chmod 777 /etc/tor/torrc", shell=True, check=True)
 
     hidden_service_conf = [
         "HiddenServiceDir /var/lib/tor/hidden_service/",
