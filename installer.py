@@ -29,6 +29,15 @@ def banner():
 subprocess.run("clear", shell=True)
 banner()
 checkPerms()
+# Preguntar al usuario el tipo de despliegue
+print("¿Qué tipo de despliegue quieres realizar?")
+print("1. Sitio web normal (.html)")
+print("2. Sitio en la dark web (.onion)")
+opcion = input("Selecciona una opción (1 o 2): ").strip()
+
+if opcion not in ["1", "2"]:
+    print("❌ Opción no válida. Saliendo.")
+    sys.exit(1)
 
 def dependencias():
     
@@ -94,6 +103,100 @@ def iniciar_habilitar_apache():
     subprocess.run("sudo systemctl enable apache2 > /dev/null 2>&1", shell=True, check=True)
     subprocess.run("sudo systemctl restart apache2 > /dev/null 2>&1", shell=True, check=True)
     print("Apache2 habilitado y en ejecución 🟢 \n")
+    
+def instalar_y_configurar_tor():
+    print("🥥 Instalando y configurando Tor para servicio .onion...\n")
+
+    tor_instalado = subprocess.run("dpkg -l | grep tor", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if tor_instalado.returncode != 0:
+        subprocess.run("sudo apt install -y tor > /dev/null 2>&1", shell=True, check=True)
+        print("✅ Tor instalado correctamente.\n")
+    else:
+        print("✅ Tor ya está instalado.\n")
+
+    torrc_path = "/etc/tor/torrc"
+    if not os.path.exists(torrc_path):
+        print("🔨 Archivo torrc no existe. Creando archivo básico...\n")
+        with open(torrc_path, "w") as f:
+            f.write("\n")
+        subprocess.run("sudo chmod 644 /etc/tor/torrc", shell=True, check=True)
+
+    hidden_service_conf = [
+        "HiddenServiceDir /var/lib/tor/hidden_service/",
+        "HiddenServicePort 80 127.0.0.1:80"
+    ]
+
+    updated_lines = []
+    with open(torrc_path, "r") as file:
+        lines = file.readlines()
+        for line in lines:
+            if line.strip().startswith("#HiddenServiceDir /var/lib/tor/hidden_service/"):
+                updated_lines.append("HiddenServiceDir /var/lib/tor/hidden_service/\n")
+            elif line.strip().startswith("#HiddenServicePort 80 127.0.0.1:80"):
+                updated_lines.append("HiddenServicePort 80 127.0.0.1:80\n")
+            else:
+                updated_lines.append(line)
+
+    if not any("HiddenServiceDir" in line for line in updated_lines):
+        updated_lines.append("\n" + "\n".join(hidden_service_conf) + "\n")
+        print("🔧 Configuración .onion añadida al final de torrc.\n")
+    else:
+        print("🔧 Líneas de configuración .onion ya presentes o activadas.\n")
+
+    with open(torrc_path, "w") as file:
+        file.writelines(updated_lines)
+
+    print("🛡️ Configurando Suricata para escuchar en interfaz 'lo'...\n")
+    suricata_config = "/etc/suricata/suricata.yaml"
+    try:
+        with open(suricata_config, "r") as f:
+            lines = f.readlines()
+
+        new_lines = []
+        inside_af_packet = False
+        found_lo = False
+
+        for line in lines:
+            if line.strip().startswith("af-packet:"):
+                inside_af_packet = True
+                new_lines.append(line)
+                continue
+
+            if inside_af_packet:
+                if "- interface: lo" in line:
+                    found_lo = True
+                elif line.strip() and not line.strip().startswith("- interface:"):
+                    inside_af_packet = False
+
+            new_lines.append(line)
+
+        if not found_lo:
+            for i, line in enumerate(new_lines):
+                if line.strip().startswith("af-packet:"):
+                    new_lines.insert(i + 1, "  - interface: lo\n")
+                    print("✅ Interfaz 'lo' añadida a Suricata\n")
+                    break
+
+        with open(suricata_config, "w") as f:
+            f.writelines(new_lines)
+
+    except Exception as e:
+        print(f"❌ Error al modificar Suricata: {e}")
+
+    subprocess.run("sudo systemctl restart tor", shell=True, check=True)
+    print("♻️ Reiniciando Tor...\n")
+    time.sleep(5)
+
+    onion_path = "/var/lib/tor/hidden_service/hostname"
+    if os.path.exists(onion_path):
+        with open(onion_path, "r") as f:
+            onion_address = f.read().strip()
+        print(f"🥥 Tu sitio .onion está disponible en:\n   http://{onion_address}\n")
+    else:
+        print("❌ No se pudo encontrar la dirección .onion después de reiniciar Tor.")
+
+
+
 
 def ejecutar_scrapper():
     print("Ejecutando scrapper para obtener HTML y CSS... \n")
@@ -113,6 +216,19 @@ def ejecutar_scrapper():
         shutil.copy(css_origen, css_destino)
         print("Archivo CSS reemplazado con el scrappeado 🟢 \n")
         os.remove(css_origen)
+
+def copiar_website_onion():
+    print("🧅 Preparando sitio .onion con diseño personalizado...\n")
+    html_src = os.path.join(os.getcwd(), "output_rendered.html")
+    css_src = os.path.join(os.getcwd(), "styles.css")
+
+    html_dst = "/var/www/html/index.html"
+    css_dst = "/var/www/html/styles.css"
+
+    shutil.copy(html_src, html_dst)
+    shutil.copy(css_src, css_dst)
+
+    print("✅ Sitio .onion desplegado en Apache (localhost).\n")
 
 def instalar_suricata():
     print("Comprobando si Suricata está instalado... \n")
@@ -200,7 +316,7 @@ def instalar_mariadb():
     """Instala MariaDB y asegura autenticación por contraseña para root."""
     print("Comprobando si MariaDB está instalado...\n")
     mariadb_instalado = subprocess.run("dpkg -l | grep mariadb-server", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    
+
     if mariadb_instalado.returncode == 0:
         print("MariaDB ya está instalado 🟢\n")
     else:
@@ -238,12 +354,14 @@ def instalar_mariadb():
         print(f"⚠ El usuario root usa '{plugin}', cambiando a 'mysql_native_password' con contraseña 'root'...\n")
         try:
             subprocess.run(
-                "sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';" FLUSH PRIVILEGES;\"",
-                shell=True, check=True
+                "sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'root'; FLUSH PRIVILEGES;\"",
+                shell=True,
+                check=True
             )
             print("✅ Root configurado para usar contraseña.\n")
         except subprocess.CalledProcessError as e:
             print(f"❌ Error al cambiar el método de autenticación: {e}")
+
 
 import mysql.connector
 import subprocess
@@ -434,6 +552,7 @@ def main():
     time.sleep(2)
     subprocess.run("clear", shell=True)
     banner()
+
     print("-------INSTALACION DE TOOLS NECESARIAS------- \n")
     instalar_apache()
     configurar_apache()
@@ -444,17 +563,26 @@ def main():
     instalar_mariadb()
     verificar_credenciales_mariadb()
     configurar_base_datos()
+
     time.sleep(2)
     print("-------URL PARA COMENZAR A DESPLEGAR EL HONEYPOT------- \n")
-    ejecutar_scrapper()
-    print("\033[1;32m" + "\n" + "="*72)
+
+    if opcion == "1":
+        ejecutar_scrapper()
+    else:
+        instalar_y_configurar_tor()
+        copiar_website_onion()
+
+    print("\033[1;32m" + "\n" + "=" * 72)
     print("--------🚀 🟢HONEYPOT DESPLEGADO Y CONFIGURADO CORRECTAMENTE 🟢 🚀--------")
-    print("="*72 + "\033[0m\n\n\n")
-    print("\033[1;32m" + "\n" + "="*72)
+    print("=" * 72 + "\033[0m\n\n\n")
+
+    print("\033[1;32m" + "\n" + "=" * 72)
     print("--------🐿️ 🟢SURICATA VIGILANDO HONEYPOT 🟢 🐿️--------")
-    print("="*72 + "\033[0m\n")
+    print("=" * 72 + "\033[0m\n")
+
     monitorear_suricata()
-   
+
 
 if __name__ == "__main__":
     try:
