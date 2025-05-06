@@ -105,14 +105,11 @@ def iniciar_habilitar_apache():
     print("Apache2 habilitado y en ejecución 🟢 \n")
     
 def instalar_y_configurar_tor():
-    print("🥥 Instalando y configurando Tor para servicio .onion...\n")
+    print("Instalando y configurando Tor para servicio .onion...\n")
 
-    tor_instalado = subprocess.run("dpkg -l | grep tor", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    if tor_instalado.returncode != 0:
-        subprocess.run("sudo apt install -y tor > /dev/null 2>&1", shell=True, check=True)
-        print("✅ Tor instalado correctamente.\n")
-    else:
-        print("✅ Tor ya está instalado.\n")
+    # Instalación forzada y silenciosa de Tor
+    subprocess.run("sudo apt install tor -y > /dev/null 2>&1", shell=True, check=True)
+    print("✅ Tor instalado o actualizado correctamente.\n")
 
     torrc_path = "/etc/tor/torrc"
     torrc_dir = os.path.dirname(torrc_path)
@@ -189,17 +186,46 @@ def instalar_y_configurar_tor():
     except Exception as e:
         print(f"❌ Error al modificar Suricata: {e}")
 
-    subprocess.run("sudo systemctl restart tor", shell=True, check=True)
-    print("♻️ Reiniciando Tor...\n")
-    time.sleep(5)
+    # Asegurarse de que el directorio de servicio oculto existe
+    hidden_service_dir = "/var/lib/tor/hidden_service/"
+    if not os.path.exists(hidden_service_dir):
+        print(f"📁 Creando directorio para HiddenService: {hidden_service_dir}")
+        subprocess.run(f"sudo mkdir -p {hidden_service_dir}", shell=True, check=True)
+        subprocess.run(f"sudo chown -R debian-tor:debian-tor {hidden_service_dir}", shell=True, check=True)
+        subprocess.run(f"sudo chmod 700 {hidden_service_dir}", shell=True, check=True)
 
-    onion_path = "/var/lib/tor/hidden_service/hostname"
-    if os.path.exists(onion_path):
-        with open(onion_path, "r") as f:
-            onion_address = f.read().strip()
-        print(f"🥥 Tu sitio .onion está disponible en:\n   http://{onion_address}\n")
-    else:
-        print("❌ No se pudo encontrar la dirección .onion después de reiniciar Tor.")
+    # Detectar si el servicio tor existe aunque esté inactivo
+    check_status = subprocess.run("systemctl status tor", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    tor_status_output = check_status.stdout + check_status.stderr
+
+    tor_started = False
+
+    try:
+        if "Loaded:" in tor_status_output:
+            print("🔄 Servicio Tor detectado. Intentando iniciarlo...\n")
+            subprocess.run("sudo systemctl enable tor", shell=True, check=False)
+            subprocess.run("sudo systemctl start tor", shell=True, check=True)
+            print("♻️ Tor iniciado correctamente (tor.service).\n")
+            tor_started = True
+        else:
+            print("⚠️ Servicio Tor no encontrado por systemd. Iniciando manualmente como demonio...\n")
+            subprocess.run("sudo pkill tor > /dev/null 2>&1", shell=True)
+            subprocess.run("sudo tor --runasdaemon 1", shell=True, check=True)
+            tor_started = True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error al iniciar Tor: {e}")
+        return
+
+    if tor_started:
+        time.sleep(5)
+        onion_path = "/var/lib/tor/hidden_service/hostname"
+        if os.path.exists(onion_path):
+            with open(onion_path, "r") as f:
+                onion_address = f.read().strip()
+            print(f"🥥 Tu sitio .onion está disponible en:\n   http://{onion_address}\n")
+        else:
+            print("❌ No se pudo encontrar la dirección .onion después de iniciar Tor.")
+
 
 
 
