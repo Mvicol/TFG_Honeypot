@@ -597,7 +597,7 @@ def obtener_usuario_normal():
 def agregar_a_crontab_sistema():
     usuario = obtener_usuario_normal()
     ruta_script = f"/home/{usuario}/Desktop/TFG_Honeypot/report_gen.py"
-    linea_cron = f"* * * * * /usr/bin/python3 {ruta_script} >> /home/{usuario}/Desktop/TFG_Honeypot/report.log 2>&1"
+    linea_cron = f"0 0 * * * /usr/bin/python3 {ruta_script} >> /home/{usuario}/Desktop/TFG_Honeypot/report.log 2>&1"
 
     try:
         # Obtener crontab actual del usuario
