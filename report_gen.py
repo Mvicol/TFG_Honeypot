@@ -5,18 +5,15 @@ from docx import Document
 from datetime import datetime
 from collections import Counter
 
-# Generar nombre del informe automáticamente usando la fecha y hora
-fecha_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-nombre_base = f"informe_{fecha_actual}"
+# Obtener la ruta donde está este script
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Obtener escritorio del usuario real (incluso si se ejecuta como root)
-home_real = os.path.expanduser("~" + os.getenv("SUDO_USER") if os.getenv("SUDO_USER") else "~")
-desktop = os.path.join(home_real, "Desktop")
-if not os.path.isdir(desktop):
-    desktop = os.path.join(home_real, "Escritorio")  # fallback en español
-
-output_dir = os.path.join(desktop, "HoneyPot_Informes")
+# Crear carpeta 'Informes' en esa misma ruta
+output_dir = os.path.join(script_dir, "Informes")
 os.makedirs(output_dir, exist_ok=True)
+
+# Mostrar la ruta para confirmar
+print(f"Los informes se guardarán en: {output_dir}")
 
 # Conexión a la base de datos
 conn = mysql.connector.connect(
@@ -83,6 +80,7 @@ doc.add_paragraph("  • Monitorizar continuamente la red para detectar patrones
 doc.add_paragraph("  • Reforzar medidas de seguridad como firewalls o sistemas IDS adicionales.")
 
 # Guardar el DOCX
+nombre_base = datetime.now().strftime("informe_%Y-%m-%d_%H-%M-%S")
 docx_path = os.path.join(output_dir, f"{nombre_base}.docx")
 doc.save(docx_path)
 print(f"[✓] Informe DOCX creado: {docx_path}")

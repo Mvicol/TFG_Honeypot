@@ -584,31 +584,41 @@ signal.signal(signal.SIGINT, manejar_salida)
 
 import os
 
+import os
+import pwd
+import subprocess
+
+def obtener_usuario_normal():
+    for p in pwd.getpwall():
+        if p.pw_uid == 1000:  # Primer usuario normal creado
+            return p.pw_name
+    raise Exception("No se encontró un usuario con UID 1000.")
+
 def agregar_a_crontab_sistema():
-    ruta_script = "/home/usuario/report_gen.py"  # Cambia esto según tu ruta real
-    linea_cron = f"* * * * * root /usr/bin/python3 {ruta_script} >> /var/log/report_gen.log 2>&1\n"
-    ruta_crontab = "/etc/crontab"
+    usuario = obtener_usuario_normal()
+    ruta_script = f"/home/{usuario}/Desktop/TFG_Honeypot/report_gen.py"
+    linea_cron = f"* * * * * /usr/bin/python3 {ruta_script} >> /home/{usuario}/Desktop/TFG_Honeypot/report.log 2>&1"
 
     try:
-        # Leer contenido actual
-        with open(ruta_crontab, "r") as f:
-            contenido = f.readlines()
+        # Obtener crontab actual del usuario
+        resultado = subprocess.run(["crontab", "-l", "-u", usuario], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        contenido_actual = resultado.stdout if resultado.returncode == 0 else ""
 
-        # Verificar si ya está la línea
-        if any(linea_cron.strip() in linea for linea in contenido):
-            print("✅ La tarea ya está en /etc/crontab")
+        if linea_cron in contenido_actual:
+            print("✅ La tarea ya está en el crontab del usuario.")
             return
 
-        # Añadir la nueva línea
-        with open(ruta_crontab, "a") as f:
-            f.write(linea_cron)
+        # Añadir la línea
+        nuevo_contenido = contenido_actual + linea_cron + "\n"
+        proceso = subprocess.run(["crontab", "-", "-u", usuario], input=nuevo_contenido, text=True)
 
-        print("🟢 Tarea añadida correctamente a /etc/crontab")
+        if proceso.returncode == 0:
+            print("🟢 Tarea añadida correctamente al crontab del usuario.")
+        else:
+            print("❌ Error al actualizar el crontab del usuario.")
 
-    except PermissionError:
-        print("❌ Permiso denegado: ejecuta este script como root o con sudo.")
     except Exception as e:
-        print(f"❌ Error al modificar /etc/crontab: {e}")
+        print(f"❌ Error: {e}")
 
 
 
