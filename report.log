@@ -13,3 +13,58 @@ Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
 [✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-05-02.docx
 [+] Convirtiendo a PDF...
 [✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-05-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-06-02.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-06-02.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-06-02.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-06-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-07-02.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-07-02.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-07-02.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-07-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-08-02.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-08-02.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-08-02.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-08-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-09-02.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-09-02.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-09-02.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-09-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-10-02.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-10-02.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-10-02.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-10-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-11-02.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-11-02.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-11-02.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-11-02.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-12-01.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-12-01.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-12-01.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-12-01.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-13-01.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-13-01.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-13-01.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-13-01.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-14-01.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-14-01.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-14-01.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-14-01.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-15-01.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-15-01.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-15-01.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-15-01.pdf
+convert /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-16-01.docx as a Writer document -> /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-16-01.pdf using filter : writer_pdf_Export
+Los informes se guardarán en: /home/kali/Desktop/TFG_Honeypot/Informes
+[✓] Informe DOCX creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-16-01.docx
+[+] Convirtiendo a PDF...
+[✓] Informe PDF creado: /home/kali/Desktop/TFG_Honeypot/Informes/informe_2025-05-08_06-16-01.pdf
