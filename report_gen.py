@@ -5,8 +5,9 @@ from docx import Document
 from datetime import datetime
 from collections import Counter
 
-# Pedir nombre del archivo al usuario
-nombre_base = input("Introduce el nombre del informe (sin extensión): ").strip()
+# Generar nombre del informe automáticamente usando la fecha y hora
+fecha_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+nombre_base = f"informe_{fecha_actual}"
 
 # Obtener escritorio del usuario real (incluso si se ejecuta como root)
 home_real = os.path.expanduser("~" + os.getenv("SUDO_USER") if os.getenv("SUDO_USER") else "~")

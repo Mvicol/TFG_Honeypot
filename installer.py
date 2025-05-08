@@ -572,9 +572,44 @@ def reiniciar_eve_json():
     except Exception as e:
         print(f"❌ Error al reiniciar {log_path}: {e}")
 
-
+def ejecutar_report_gen():
+    try:
+        print("\n\033[1;34m[INFO] Ejecutando generador de reportes...\033[0m\n")
+        subprocess.run(["python3", "report_gen.py"], check=True)
+        print("\033[1;32m[OK] Reporte generado correctamente.\033[0m\n")
+    except subprocess.CalledProcessError as e:
+        print(f"\033[1;31m[ERROR] Fallo al generar el reporte: {e}\033[0m\n")
 # Registrar el manejador de la señal SIGINT
 signal.signal(signal.SIGINT, manejar_salida)
+
+import os
+
+def agregar_a_crontab_sistema():
+    ruta_script = "/home/usuario/report_gen.py"  # Cambia esto según tu ruta real
+    linea_cron = f"* * * * * root /usr/bin/python3 {ruta_script} >> /var/log/report_gen.log 2>&1\n"
+    ruta_crontab = "/etc/crontab"
+
+    try:
+        # Leer contenido actual
+        with open(ruta_crontab, "r") as f:
+            contenido = f.readlines()
+
+        # Verificar si ya está la línea
+        if any(linea_cron.strip() in linea for linea in contenido):
+            print("✅ La tarea ya está en /etc/crontab")
+            return
+
+        # Añadir la nueva línea
+        with open(ruta_crontab, "a") as f:
+            f.write(linea_cron)
+
+        print("🟢 Tarea añadida correctamente a /etc/crontab")
+
+    except PermissionError:
+        print("❌ Permiso denegado: ejecuta este script como root o con sudo.")
+    except Exception as e:
+        print(f"❌ Error al modificar /etc/crontab: {e}")
+
 
 
 def main():
@@ -618,9 +653,11 @@ def main():
 
 if __name__ == "__main__":
     try:
+        agregar_a_crontab_sistema()
         main()
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
     finally:
         # Aun que se termine el programa vuelve a "cerrar" suricata por si acaso
         parar_suricata()
+        ejecutar_report_gen()
