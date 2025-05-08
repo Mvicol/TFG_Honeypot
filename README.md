@@ -68,7 +68,7 @@ Este proyecto ha sido desarrollado con fines estrictamente educativos y de inves
 ### Instrucciones
 
 ```bash
-git clone https://github.com/tuusuario/tfg-honeypots-darkweb.git
+git clone https://github.com/Mvicol/TFG_Honeypots.git
 cd tfg-honeypots-darkweb
 sudo python3 installer.py
 
