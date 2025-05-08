@@ -230,8 +230,16 @@ def instalar_y_configurar_tor():
 
 
 
+import subprocess
+import os
+import shutil
+
+import requests
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
+
 def ejecutar_scrapper():
-    print("Ejecutando scrapper para obtener HTML y CSS... \n")
+    print("Ejecutando scrapper para obtener HTML, CSS y JS... \n")
     subprocess.run("sudo python3 normal_scrapper.py", shell=True, check=True)
     
     html_origen = os.path.join(os.getcwd(), "extracted_html.html")
@@ -239,6 +247,7 @@ def ejecutar_scrapper():
     html_destino = "/var/www/html/index.html"
     css_destino = "/var/www/html/styles.css"
     
+    # Comprobar si los archivos HTML y CSS existen y copiar
     if os.path.exists(html_origen):
         shutil.copy(html_origen, html_destino)
         print("Archivo index.html reemplazado con el scrappeado 🟢 \n")
@@ -248,6 +257,42 @@ def ejecutar_scrapper():
         shutil.copy(css_origen, css_destino)
         print("Archivo CSS reemplazado con el scrappeado 🟢 \n")
         os.remove(css_origen)
+
+    # Obtener los enlaces JS desde el archivo HTML
+    URL = "http://enti.cat"  # Aquí pon la URL de la página que estás scrappeando
+    HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    response = requests.get(URL, headers=HEADERS)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # Encontrar todos los archivos JS
+    js_links = [script["src"] for script in soup.find_all("script") if "src" in script.attrs]
+    js_destino = "/var/www/html/js"
+
+    # Verificar si la carpeta JS existe, si no, crearla
+    if not os.path.exists(js_destino):
+        os.makedirs(js_destino)
+        print("Carpeta JS creada 🟢")
+
+    # Descargar y guardar cada archivo JS con su nombre original
+    for js_link in js_links:
+        js_url = urljoin(URL, js_link)  # Convertir enlaces relativos a absolutos
+        js_nombre = js_link.split("/")[-1]  # Obtener el nombre del archivo JS
+
+        try:
+            js_response = requests.get(js_url, headers=HEADERS)
+            js_response.raise_for_status()
+
+            # Guardar el archivo JS con su nombre original
+            js_path = os.path.join(js_destino, js_nombre)
+            with open(js_path, "wb") as f:
+                f.write(js_response.content)
+            print(f"Archivo JS '{js_nombre}' guardado correctamente 🟢")
+
+        except Exception as e:
+            print(f"❌ Error al descargar el JS {js_link}: {e}")
+
+
+
 
 def copiar_website_onion():
     print("🧅 Preparando sitio .onion con diseño personalizado...\n")
