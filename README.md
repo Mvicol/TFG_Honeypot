@@ -40,7 +40,7 @@ tfg-honeypots-darkweb/
 - Acceso root
 - Conexión a Internet
 
-##🛠️ Tecnologías Utilizadas
+## 🛠️ Tecnologías Utilizadas
 
 - 🐍 Python 3
 
