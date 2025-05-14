@@ -243,7 +243,7 @@ def ejecutar_scrapper():
     subprocess.run("sudo python3 normal_scrapper.py", shell=True, check=True)
     
     html_origen = os.path.join(os.getcwd(), "extracted_html.html")
-    css_origen = os.path.join(os.getcwd(), "styles.css")
+    css_origen = os.path.join(os.getcwd(), "styles2.css")
     html_destino = "/var/www/html/index.html"
     css_destino = "/var/www/html/styles.css"
     

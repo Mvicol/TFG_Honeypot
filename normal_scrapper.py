@@ -51,7 +51,7 @@ for css_link in css_links:
         print(f"⚠ Error downloading CSS from {full_url}: {e}")
 
 # Guardar CSS
-CSS_FILE = "styles.css"
+CSS_FILE = "styles2.css"
 with open(CSS_FILE, "w", encoding="utf-8") as f:
     f.write(all_css)
 print(f"✅ Extracted CSS saved as '{CSS_FILE}'")
